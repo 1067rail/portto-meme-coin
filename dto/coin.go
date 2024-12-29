@@ -21,3 +21,11 @@ type GetCoinRes struct {
 	CreatedAt       time.Time `json:"created_at"`
 	PopularityScore int       `json:"popularity_score"`
 }
+
+type UpdateCoinReq struct {
+	Description string `json:"description"`
+}
+
+type UpdateCoinRes struct {
+	ID uuid.UUID `json:"id"`
+}

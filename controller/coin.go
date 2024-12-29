@@ -44,18 +44,27 @@ func (c *Controller) GetCoin(ctx *gin.Context) {
 }
 
 func (c *Controller) UpdateCoin(ctx *gin.Context) {
-	id := ctx.Param("id")
+	var id *uuid.UUID
 
-	var body interface{}
+	if _id, err := uuid.Parse(ctx.Param("id")); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		id = &_id
+	}
+
+	var body dto.UpdateCoinReq
 	if err := ctx.Bind(&body); err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	fmt.Println("Controller.GetCoin", id, body)
-	c.coinService.UpdateCoin()
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+	if result, err := c.coinService.UpdateCoin(*id, body); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		ctx.JSON(http.StatusOK, result)
+	}
 }
 
 func (c *Controller) DeleteCoin(ctx *gin.Context) {

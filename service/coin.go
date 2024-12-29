@@ -53,8 +53,30 @@ func (c *CoinService) GetCoin(id uuid.UUID) (dto.GetCoinRes, error) {
 	}
 }
 
-func (*CoinService) UpdateCoin() {
-	fmt.Println("CoinService.UpdateCoin")
+func (c *CoinService) UpdateCoin(id uuid.UUID, payload dto.UpdateCoinReq) (dto.UpdateCoinRes, error) {
+
+	err := c.db.Transaction(func(db *gorm.DB) error {
+
+		memeCoin := models.MemeCoin{
+			ID: id,
+		}
+
+		if tx := c.db.First(&memeCoin); tx.Error != nil {
+			return tx.Error
+		}
+
+		memeCoin.Description = payload.Description
+
+		db.Save(memeCoin)
+
+		return nil
+	})
+
+	if err != nil {
+		return dto.UpdateCoinRes{}, err
+	}
+
+	return dto.UpdateCoinRes{ID: id}, nil
 }
 
 func (*CoinService) DeleteCoin() {
