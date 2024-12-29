@@ -79,8 +79,11 @@ func (c *CoinService) UpdateCoin(id uuid.UUID, payload dto.UpdateCoinReq) (dto.U
 	return dto.UpdateCoinRes{ID: id}, nil
 }
 
-func (*CoinService) DeleteCoin() {
-	fmt.Println("CoinService.DeleteCoin")
+func (c *CoinService) DeleteCoin(id uuid.UUID) (dto.DeleteCoinRes, error) {
+	if tx := c.db.Unscoped().Delete(&models.MemeCoin{}, id); tx.Error != nil {
+		return dto.DeleteCoinRes{}, tx.Error
+	}
+	return dto.DeleteCoinRes{ID: id}, nil
 }
 
 func (*CoinService) PokeCoin() {

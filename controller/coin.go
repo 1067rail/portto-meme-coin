@@ -68,12 +68,21 @@ func (c *Controller) UpdateCoin(ctx *gin.Context) {
 }
 
 func (c *Controller) DeleteCoin(ctx *gin.Context) {
-	id := ctx.Param("id")
+	var id *uuid.UUID
 
-	fmt.Println("Controller.DeleteCoin", id)
-	c.coinService.DeleteCoin()
+	if _id, err := uuid.Parse(ctx.Param("id")); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		id = &_id
+	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+	if result, err := c.coinService.DeleteCoin(*id); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		ctx.JSON(http.StatusOK, result)
+	}
 }
 
 func (c *Controller) PokeCoin(ctx *gin.Context) {

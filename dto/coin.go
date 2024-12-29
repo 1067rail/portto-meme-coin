@@ -29,3 +29,7 @@ type UpdateCoinReq struct {
 type UpdateCoinRes struct {
 	ID uuid.UUID `json:"id"`
 }
+
+type DeleteCoinRes struct {
+	ID uuid.UUID `json:"id"`
+}
