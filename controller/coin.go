@@ -7,6 +7,7 @@ import (
 	"github.com/1067rail/portto-meme-coin/dto"
 	"github.com/1067rail/portto-meme-coin/httputil"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func (c *Controller) CreateCoin(ctx *gin.Context) {
@@ -25,12 +26,21 @@ func (c *Controller) CreateCoin(ctx *gin.Context) {
 }
 
 func (c *Controller) GetCoin(ctx *gin.Context) {
-	id := ctx.Param("id")
+	var id *uuid.UUID
 
-	fmt.Println("Controller.GetCoin", id)
-	c.coinService.GetCoin()
+	if _id, err := uuid.Parse(ctx.Param("id")); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		id = &_id
+	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+	if result, err := c.coinService.GetCoin(*id); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		ctx.JSON(http.StatusOK, result)
+	}
 }
 
 func (c *Controller) UpdateCoin(ctx *gin.Context) {

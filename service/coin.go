@@ -5,6 +5,7 @@ import (
 
 	"github.com/1067rail/portto-meme-coin/dto"
 	"github.com/1067rail/portto-meme-coin/models"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -35,8 +36,21 @@ func (c *CoinService) CreateCoin(payload dto.CreateCoinReq) (dto.CreateCoinRes, 
 
 }
 
-func (*CoinService) GetCoin() {
-	fmt.Println("CoinService.GetCoin")
+func (c *CoinService) GetCoin(id uuid.UUID) (dto.GetCoinRes, error) {
+	memeCoin := models.MemeCoin{
+		ID: id,
+	}
+
+	if tx := c.db.First(&memeCoin); tx.Error != nil {
+		return dto.GetCoinRes{}, tx.Error
+	} else {
+		return dto.GetCoinRes{
+			Name:            memeCoin.Name,
+			Description:     memeCoin.Description,
+			CreatedAt:       memeCoin.CreatedAt,
+			PopularityScore: memeCoin.PopularityScore,
+		}, nil
+	}
 }
 
 func (*CoinService) UpdateCoin() {

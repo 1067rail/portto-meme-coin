@@ -43,3 +43,10 @@ curl -X POST \
 -d '{"name": "pepe", "description": "Pepe the Frog is a famous comic character and Internet meme created by cartoonist Matt Furie."}' \
 http://localhost:8080/api/v1/coins 
 ```
+
+2. get coin
+
+```sh
+curl -X GET \
+http://localhost:8080/api/v1/coins/4681d911-c4f4-460d-918a-8c124d954626
+```
