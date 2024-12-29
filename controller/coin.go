@@ -4,21 +4,24 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/1067rail/portto-meme-coin/dto"
 	"github.com/1067rail/portto-meme-coin/httputil"
 	"github.com/gin-gonic/gin"
 )
 
 func (c *Controller) CreateCoin(ctx *gin.Context) {
-	var body interface{}
+	var body dto.CreateCoinReq
 	if err := ctx.Bind(&body); err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	fmt.Println("Controller.CreateCoin", body)
-	c.coinService.CreateCoin()
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+	if result, err := c.coinService.CreateCoin(body); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		ctx.JSON(http.StatusOK, result)
+	}
 }
 
 func (c *Controller) GetCoin(ctx *gin.Context) {

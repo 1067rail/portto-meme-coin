@@ -32,3 +32,14 @@ docker run --name test-postgres \
 ```
 go run main.go
 ```
+
+### Test API with cURL
+
+1. create coin
+
+```sh
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"name": "pepe", "description": "Pepe the Frog is a famous comic character and Internet meme created by cartoonist Matt Furie."}' \
+http://localhost:8080/api/v1/coins 
+```
