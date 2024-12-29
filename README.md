@@ -27,6 +27,12 @@ docker run --name test-postgres \
 ./scripts/migration-apply.sh
 ```
 
+### Build swagger API document
+
+```sh
+./scripts/swagger-build.sh
+```
+
 ### Start server
 
 ```
