@@ -1,12 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/1067rail/portto-meme-coin/database"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-var db = make(map[string]string)
+var usersMap = make(map[string]string)
+
+var db *gorm.DB
 
 func setupRouter() *gin.Engine {
 	// Disable Console Color
@@ -21,7 +27,7 @@ func setupRouter() *gin.Engine {
 	// Get user value
 	r.GET("/user/:name", func(c *gin.Context) {
 		user := c.Params.ByName("name")
-		value, ok := db[user]
+		value, ok := usersMap[user]
 		if ok {
 			c.JSON(http.StatusOK, gin.H{"user": user, "value": value})
 		} else {
@@ -59,7 +65,7 @@ func setupRouter() *gin.Engine {
 		}
 
 		if c.Bind(&json) == nil {
-			db[user] = json.Value
+			usersMap[user] = json.Value
 			c.JSON(http.StatusOK, gin.H{"status": "ok"})
 		}
 	})
@@ -68,6 +74,14 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
+
+	if _db, err := database.Initialize(); err != nil {
+		fmt.Printf("Database initialize error: %v\n", err)
+		os.Exit(1)
+	} else {
+		db = _db
+	}
+
 	r := setupRouter()
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
