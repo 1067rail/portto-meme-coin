@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/1067rail/portto-meme-coin/config"
 	"github.com/1067rail/portto-meme-coin/controller"
 	"github.com/1067rail/portto-meme-coin/database"
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,6 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-
 	if _db, err := database.Initialize(); err != nil {
 		fmt.Printf("Database initialize error: %v\n", err)
 		os.Exit(1)
@@ -44,6 +44,6 @@ func main() {
 	}
 
 	r := setupRouter()
-	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
+
+	r.Run(fmt.Sprintf(":%d", config.GetConfig().ServerPort))
 }
