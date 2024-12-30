@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/1067rail/portto-meme-coin/dto"
 	"github.com/1067rail/portto-meme-coin/models"
 	"github.com/google/uuid"
@@ -86,6 +84,31 @@ func (c *CoinService) DeleteCoin(id uuid.UUID) (dto.DeleteCoinRes, error) {
 	return dto.DeleteCoinRes{ID: id}, nil
 }
 
-func (*CoinService) PokeCoin() {
-	fmt.Println("CoinService.PokeCoin")
+func (c *CoinService) PokeCoin(id uuid.UUID) (dto.PokeCoinRes, error) {
+	var memeCoin *models.MemeCoin
+
+	err := c.db.Transaction(func(db *gorm.DB) error {
+		if tx := db.Exec(`set transaction isolation level serializable`); tx.Error != nil {
+			return tx.Error
+		}
+
+		memeCoin = &models.MemeCoin{
+			ID: id,
+		}
+		if tx := c.db.First(&memeCoin); tx.Error != nil {
+			return tx.Error
+		}
+
+		memeCoin.PopularityScore++
+
+		db.Save(memeCoin)
+
+		return nil
+	})
+
+	if err != nil {
+		return dto.PokeCoinRes{}, err
+	}
+
+	return dto.PokeCoinRes{ID: memeCoin.ID, PopularityScore: memeCoin.PopularityScore}, nil
 }

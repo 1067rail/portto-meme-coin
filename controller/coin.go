@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/1067rail/portto-meme-coin/dto"
@@ -86,10 +85,20 @@ func (c *Controller) DeleteCoin(ctx *gin.Context) {
 }
 
 func (c *Controller) PokeCoin(ctx *gin.Context) {
-	id := ctx.Param("id")
+	var id *uuid.UUID
 
-	fmt.Println("Controller.PokeCoin", id)
-	c.coinService.PokeCoin()
+	if _id, err := uuid.Parse(ctx.Param("id")); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		id = &_id
+	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+	if result, err := c.coinService.PokeCoin(*id); err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	} else {
+		ctx.JSON(http.StatusOK, result)
+	}
+
 }

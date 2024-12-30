@@ -33,3 +33,8 @@ type UpdateCoinRes struct {
 type DeleteCoinRes struct {
 	ID uuid.UUID `json:"id"`
 }
+
+type PokeCoinRes struct {
+	ID              uuid.UUID `json:"id"`
+	PopularityScore int       `json:"popularity_score"`
+}
