@@ -1,5 +1,14 @@
 # Meme Coin
 
+## Getting started
+
+### Set up environment variables
+
+```sh
+cp example.env .env
+# Edit the .env file to update configurations
+```
+
 ## Develop guide
 
 ### Start test db
