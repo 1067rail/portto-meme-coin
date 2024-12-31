@@ -82,3 +82,11 @@ http://localhost:8080/api/v1/coins/4681d911-c4f4-460d-918a-8c124d954626
 curl -X POST \
 http://localhost:8080/api/v1/coins/4681d911-c4f4-460d-918a-8c124d954626/poke
 ```
+
+## Deployment guide
+
+### Build docker image
+
+```sh
+docker build --tag meme-coin:latest .
+```
