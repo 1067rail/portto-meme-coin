@@ -1,0 +1,47 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .env:/app/.env
+    environment:
+      - DATABASE_HOST=db
+    networks:
+      - meme-coin
+    depends_on:
+      db:
+        condition: service_healthy
+      atlas:
+        condition: service_completed_successfully
+
+  db:
+    image: "postgres:17"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=meme-coin
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - meme-coin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "meme-coin"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+  atlas:
+    image: "arigaio/atlas:latest-alpine"
+    networks:
+      - meme-coin
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    command: migrate apply --dir "file:///migrations" --url "postgres://user:pass@db:5432/meme-coin?sslmode=disable"
+networks:
+  meme-coin:
+volumes:
+  pg-data:

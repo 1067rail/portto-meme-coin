@@ -9,6 +9,12 @@ cp example.env .env
 # Edit the .env file to update configurations
 ```
 
+## Quick start (use docker-compose)
+
+```sh
+docker-compose up --build
+```
+
 ## Develop guide
 
 ### Start test db
@@ -21,7 +27,7 @@ docker run --name test-postgres \
   -e POSTGRES_DB=meme-coin \
   -v pg-data:/var/lib/postgresql/data \
   -p 5432:5432 \
-  -d postgres
+  -d postgres:17
 ```
 
 ### Create migration file
@@ -57,7 +63,7 @@ http://localhost:8080/api/v1/coins
 
 ```sh
 curl -X GET \
-http://localhost:8080/api/v1/coins/4681d911-c4f4-460d-918a-8c124d954626
+http://localhost:8080/api/v1/coins/55afd56a-c694-4dc8-a212-74d4ea97871a
 ```
 
 3. update coin
